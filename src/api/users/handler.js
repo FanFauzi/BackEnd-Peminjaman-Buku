@@ -4,7 +4,7 @@ class UsersHandler {
     this._validate = validator;
   }
 
-  async postUserHandler(request, h) {
+  async postUserSignUpHandler(request, h) {
     this._validate.validateUserPayload(request.payload);
     const { username, password, fullname } = request.payload;
 
@@ -15,6 +15,22 @@ class UsersHandler {
       message: 'User berhasil ditambahkan',
       data: {
         userId,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  async postUserSignInHandler(request, h) {
+    const { username, password } = request.payload;
+
+    const user = await this._service.verifyUserCredential({ username, password });
+
+    const response = h.response({
+      status: 'success',
+      message: 'User berhasil ditemukan',
+      data: {
+        user,
       },
     });
     response.code(201);

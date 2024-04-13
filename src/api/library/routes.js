@@ -3,24 +3,25 @@ const routes = (handler) => [
     method: 'POST',
     path: '/books',
     handler: (request, h) => handler.postBookHandler(request, h),
-    // options: {
-    //   payload: {
-    //     allow: 'multipart/form-data',
-    //     multipart: true,
-    //     output: 'stream',
-    //     parse: true
-    //   }
-    // }
+    options: {
+      auth: 'libraryapp_jwt',
+    },
   },
   {
     method: 'GET',
     path: `/books/{name?}`,
-    handler: (request, h) => handler.getBookHandler(request, h)
+    handler: (request, h) => handler.getBookHandler(request, h),
+    options: {
+      auth: 'libraryapp_jwt',
+    },
   },
   {
     method: 'DELETE',
     path: '/books/{id}',
-    handler: (request) => handler.deleteBook(request)
+    handler: (request) => handler.deleteBook(request),
+    options: {
+      auth: 'libraryapp_jwt',
+    },
   }
 ]
 

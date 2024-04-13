@@ -1,6 +1,7 @@
 require('dotenv').config();	
 
 const Hapi = require('@hapi/hapi');	
+const Jwt = require('@hapi/jwt');
 
 const ClientError = require('./exeptions/ClientError');
 
@@ -14,9 +15,16 @@ const books = require('./api/library');
 const BooksService = require('./services/postgres/BooksService');
 const BooksValidator = require('./validator/books');
 
+// Authentications
+const authentications = require('./api/authentications');	
+const AuthenticationsService = require('./services/postgres/AuthenticationsService');	
+const TokenManager = require('./tokenize/TokenManager');
+const AuthenticationsValidator = require('./validator/authentications');
+
 const init = async () => {
   const booksService = new BooksService();
   const usersService = new UserService();
+  const authenticationsService = new AuthenticationsService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -27,6 +35,29 @@ const init = async () => {
       },
     },
   });
+
+  await server.register([
+    {
+      plugin: Jwt,
+    }
+  ]);
+
+  // mendefinisikan strategi autentikasi jwt
+  server.auth.strategy('libraryapp_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  })
 
   await server.register([
     {
@@ -41,6 +72,15 @@ const init = async () => {
       options: {
         service: usersService,
         validator: UsersValoidator,
+      }
+    },
+    {
+      plugin: authentications,
+      options: {
+        authenticationsService,
+        usersService,
+        tokenManager: TokenManager,
+        validator: AuthenticationsValidator,
       }
     }
   ])

@@ -8,6 +8,10 @@ class LibraryHandler {
     const {
       name, year, author, publisher, pageCount, reading, person
     } = request.payload;
+    
+    const user = request.params;
+    console.log(user);
+    console.log(request.payload);
 
     this._validator.validateBookPayload({
       name, year, author, publisher, pageCount, reading, person
