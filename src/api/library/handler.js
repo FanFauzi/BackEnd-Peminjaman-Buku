@@ -6,19 +6,15 @@ class LibraryHandler {
 
   async postBookHandler(request, h) {
     const {
-      name, year, author, publisher, pageCount, reading, person
+      name, year, author, publisher, pageCount,
     } = request.payload;
-    
-    const user = request.params;
-    console.log(user);
-    console.log(request.payload);
 
     this._validator.validateBookPayload({
-      name, year, author, publisher, pageCount, reading, person
+      name, year, author, publisher, pageCount,
     });
 
     const bookId = await this._service.addBook(
-      name, year, author, publisher, pageCount, reading, person
+      name, year, author, publisher, pageCount,
     )
 
     const response = h.response({
@@ -32,10 +28,33 @@ class LibraryHandler {
     return response;
   }
 
-  async getBookHandler(request) {
+  // fitur user
+  async getBooksHandler() {
+    const books = await this._service.getBooks();
+
+    return {
+      status: 'success',
+      data: {
+        books,
+      }
+    }
+  }
+
+  async getBookByIdUserHandler() {
+    const books = await this._service.getBookByIdUser();
+
+    return {
+      status: 'success',
+      data: {
+        books,
+      }
+    }
+  }
+
+  async getBookByNameHandler(request) {
     const { name } = request.params;
 
-    const books = await this._service.getBooks(name);
+    const books = await this._service.getBookByName(name);
 
     return {
       status: 'success',

@@ -21,10 +21,33 @@ class UsersHandler {
     return response;
   }
 
+  async postAdminSignUpHandler(request, h) {
+    this._validate.validateUserPayload(request.payload);
+    const { username, password, fullname } = request.payload;
+
+    const adminId = await this._service.addAdmin({ username, password, fullname });
+
+    const response = h.response({
+      status: 'success',
+      message: 'Admin berhasil ditambahkan',
+      data: {
+        adminId,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
   async postUserSignInHandler(request, h) {
     const { username, password } = request.payload;
+    let user;
 
-    const user = await this._service.verifyUserCredential({ username, password });
+    if (username == "admin") {
+      user = await this._service.verifyAdminCredential(username, password);
+    } else {
+      user = await this._service.verifyUserCredential(username, password);
+    }
+
 
     const response = h.response({
       status: 'success',
@@ -35,6 +58,17 @@ class UsersHandler {
     });
     response.code(201);
     return response;
+  }
+
+  async getUsersHandler() {
+    const users = await this._service.getUsers();
+
+    return {
+      status: 'success',
+      data: {
+        users,
+      },
+    }
   }
 
   async getUserByIdHandler(request) {

@@ -6,8 +6,6 @@ const BookPayloadSchema = Joi.object({
   author: Joi.string().required(),
   publisher: Joi.string().required(),
   pageCount: Joi.number().integer().required(),
-  reading: Joi.boolean().required(),
-  person: Joi.string().required(),
 });
 
 module.exports = { BookPayloadSchema };

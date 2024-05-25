@@ -7,10 +7,16 @@ class AuthenticationsHandler {
   }
 
   async postAuthenticationHandler(request, h) {
+    let id;
     this._validator.validatePostAuthenticationPayload(request.payload);
 
     const { username, password } = request.payload;
-    const id = await this._usersService.verifyUserCredential(username, password);
+    if (username == "admin") {
+      id = await this._usersService.verifyAdminCredential(username, password);
+    } else {
+      
+      id = await this._usersService.verifyUserCredential(username, password);
+    }
 
     const accessToken = this._tokenManager.generateAccessToken({ id });
     const refreshToken = this._tokenManager.generateRefreshToken({id});

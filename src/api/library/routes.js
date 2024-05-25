@@ -9,8 +9,24 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: `/books/{name?}`,
-    handler: (request, h) => handler.getBookHandler(request, h),
+    path: `/books`,
+    handler: (request, h) => handler.getBooksHandler(request, h),
+    options: {
+      auth: 'libraryapp_jwt',
+    },
+  },
+  {
+    method: 'GET',
+    path: `/books/id/{id?}`,
+    handler: (request, h) => handler.getBookByIdUserHandler(request, h),
+    options: {
+      auth: 'libraryapp_jwt',
+    },
+  },
+  {
+    method: 'GET',
+    path: `/books/name/{name?}`,
+    handler: (request, h) => handler.getBookByNameHandler(request, h),
     options: {
       auth: 'libraryapp_jwt',
     },

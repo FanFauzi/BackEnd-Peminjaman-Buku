@@ -1,12 +1,11 @@
-/* eslint-disable camelcase */
-exports.up = pgm => {
-  pgm.createTable('users', {
+exports.up = (pgm) => {
+  pgm.createTable('admin', {
     id: {
       type: 'VARCHAR(21)',
       primaryKey: true
     },
     username: {
-      type: 'VARCHAR(50)',
+      type: 'TEXT',
       unique: true,
       notNull: true
     },
@@ -21,11 +20,11 @@ exports.up = pgm => {
     role: {
       type: 'TEXT',
       notNull: true,
-      default: 'user'
+      default: 'admin'
     }
   })
 };
 
-exports.down = pgm => {
-  pgm.dropTable('users')	
+exports.down = (pgm) => {
+  pgm.dropTable('admin');
 };

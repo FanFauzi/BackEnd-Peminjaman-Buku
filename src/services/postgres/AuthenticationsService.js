@@ -21,8 +21,6 @@ class AuthenticationsService {
       values: [token],
     };
 
-    console.log(token)
-
     const result = await this._pool.query(query);
 
     if(!result.rows.length) {

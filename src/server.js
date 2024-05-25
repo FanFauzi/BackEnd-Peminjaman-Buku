@@ -21,9 +21,15 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
+// Peminjam
+const peminjam = require('./api/peminjam');
+const PeminjamService = require('./services/postgres/PeminjamService');
+const PeminjamValidator = require('./validator/peminjam');
+
 const init = async () => {
   const booksService = new BooksService();
   const usersService = new UserService();
+  const peminjamService = new PeminjamService();
   const authenticationsService = new AuthenticationsService();
 
   const server = Hapi.server({
@@ -81,6 +87,13 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      }
+    },
+    {
+      plugin: peminjam,
+      options: {
+        service: peminjamService,
+        validator: PeminjamValidator
       }
     }
   ])

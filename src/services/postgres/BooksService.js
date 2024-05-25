@@ -8,12 +8,12 @@ class BooksService {
     this._pool = new Pool();
   }
 
-  async addBook(name, year, author, publisher, pageCount, reading) {
+  async addBook(name, year, author, publisher, pageCount) {
     const id = `book-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO books VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-      values: [id, name, year, author, publisher, pageCount, reading],
+      text: 'INSERT INTO books VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, name, year, author, publisher, pageCount],
     };
 
     const result = await this._pool.query(query);
@@ -25,7 +25,28 @@ class BooksService {
     return result.rows[0].id;
   }
 
-  async getBooks(name) {
+  async getBooks() {
+    // const query = {
+    //   text: 'SELECT * FROM books WHERE name LIKE $1',
+    //   values: [`%${name}%`],
+    // };
+
+    const result = await this._pool.query("SELECT * FROM books");
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Buku tidak ditemukan');
+    }
+
+    return result.rows;
+  }
+
+  // async getBookByIdUser() {
+  //   const query = {
+  //     text: 'SELECT * FROM books',
+  //   }
+  // }
+
+  async getBookByName(name) {
     const query = {
       text: 'SELECT * FROM books WHERE name LIKE $1',
       values: [`%${name}%`],

@@ -3,7 +3,7 @@
 exports.up = pgm => {
   pgm.createTable('books', {
     id: {
-      type: 'VARCHAR(50)',
+      type: 'VARCHAR(21)',
       primaryKey: true
     },
     name: {
@@ -26,16 +26,6 @@ exports.up = pgm => {
       type: 'INTEGER',
       notNull: true
     },
-    reading: {
-      type: 'BOOLEAN',
-      notNull: true,
-      default: false
-    },
-    person: {
-      type: 'TEXT',
-      notNull: true,
-      default: 'unknown'
-    }
   })
 };
 
