@@ -48,7 +48,6 @@ class UsersHandler {
       user = await this._service.verifyUserCredential(username, password);
     }
 
-
     const response = h.response({
       status: 'success',
       message: 'User berhasil ditemukan',

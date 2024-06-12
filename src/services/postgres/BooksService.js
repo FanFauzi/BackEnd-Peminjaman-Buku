@@ -8,12 +8,12 @@ class BooksService {
     this._pool = new Pool();
   }
 
-  async addBook(name, year, author, publisher, pageCount) {
+  async addBook(name, year, author, publisher, pageCount, reading) {
     const id = `book-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO books VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
-      values: [id, name, year, author, publisher, pageCount],
+      text: 'INSERT INTO books VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+      values: [id, name, year, author, publisher, pageCount, reading],
     };
 
     const result = await this._pool.query(query);
@@ -25,12 +25,24 @@ class BooksService {
     return result.rows[0].id;
   }
 
-  async getBooks() {
-    // const query = {
-    //   text: 'SELECT * FROM books WHERE name LIKE $1',
-    //   values: [`%${name}%`],
-    // };
+  async addReadingBook(bookId, bool) {
+    console.log(bookId, bool)
+    const query = {
+      text: 'UPDATE books SET reading = $2 WHERE id = $1 RETURNING id',
+      values: [bookId, bool],
+    }
 
+    const result = await this._pool.query(query);
+    console.log(result.rows)
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Buku tidak ditemukan');
+    }
+
+    return result.rows;
+  }
+
+  async getBooks() {
     const result = await this._pool.query("SELECT * FROM books");
 
     if (result.rows.length === 0) {
@@ -40,11 +52,11 @@ class BooksService {
     return result.rows;
   }
 
-  // async getBookByIdUser() {
-  //   const query = {
-  //     text: 'SELECT * FROM books',
-  //   }
-  // }
+  async getBookByIdUser() {
+    const query = {
+      text: 'SELECT * FROM books',
+    }
+  }
 
   async getBookByName(name) {
     const query = {
@@ -59,6 +71,21 @@ class BooksService {
     }
 
     return result.rows;
+  }
+
+  async getBookById(bookId) {
+    const query = {
+      text: 'SELECT * FROM books WHERE id = $1',
+      values: [bookId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Buku tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 
   async deleteBook(id) {

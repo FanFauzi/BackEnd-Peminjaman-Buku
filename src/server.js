@@ -27,9 +27,9 @@ const PeminjamService = require('./services/postgres/PeminjamService');
 const PeminjamValidator = require('./validator/peminjam');
 
 const init = async () => {
-  const booksService = new BooksService();
-  const usersService = new UserService();
   const peminjamService = new PeminjamService();
+  const booksService = new BooksService(peminjamService);
+  const usersService = new UserService();
   const authenticationsService = new AuthenticationsService();
 
   const server = Hapi.server({
@@ -92,7 +92,8 @@ const init = async () => {
     {
       plugin: peminjam,
       options: {
-        service: peminjamService,
+        peminjamService, 
+        booksService,
         validator: PeminjamValidator
       }
     }

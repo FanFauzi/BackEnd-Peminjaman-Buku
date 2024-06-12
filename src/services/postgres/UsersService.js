@@ -33,7 +33,7 @@ class UserServices {
   async addAdmin({ username, password, fullname }) {
     await this.verifyNewUsername(username);
 
-    const id = `admin-${nanoid(16)}`;
+    const id = `adm-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
@@ -50,9 +50,15 @@ class UserServices {
   }
 
   async getUsers() {
-    const result = await this._pool.query('SELECT id, username, fullname FROM users');
+    const result = await this._pool.query('SELECT * FROM users');
 
-    return result.rows;
+    if (!result.rows.length) {
+      throw new NotFoundError('User tidak ditemukan');
+    }
+
+    console.log({...result.rows})
+
+    return {...result.rows};
   }
 
   async getUserById(id) {
@@ -103,7 +109,7 @@ class UserServices {
     if (!match) {
       throw new AuthenticationError('Kredensial yang Anda berikan salah')
     }
-    return id, role;
+    return {id, role};
   }
 
   async verifyAdminCredential(username, password) {

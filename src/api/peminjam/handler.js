@@ -1,15 +1,17 @@
 class PeminjamHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(peminjamService, booksService, validator) {
+    this._peminjamService = peminjamService;
+    this._booksService = booksService
     this._validator = validator;
   }
 
   async postPeminjamHandler(request, h) {
     this._validator.validatePeminjamPayload(request.payload);
-    // const {id: credentialId} = request.auth.credentials;
-    const { bookId, userId } = request.payload;
+    const { userId, bookId } = request.payload;
 
-    const peminjam = await this._service.addPeminjam({ userId, bookId });
+    const peminjam = await this._peminjamService.addPeminjam({ userId, bookId });
+    await this._booksService.addReadingBook(bookId, true)
+
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil ditambahkan ke peminjam',
@@ -22,7 +24,22 @@ class PeminjamHandler {
   }
 
   async getPeminjamHandler(request, h) {
-    const peminjam = await this._service.getPeminjam();
+    const peminjam = await this._peminjamService.getPeminjam();
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        peminjam,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  async getPeminjamByIdHandler(request, h) {
+    const { userId } = request.params;
+
+    const peminjam = await this._peminjamService.getPeminjamById(userId);
 
     const response = h.response({
       status: 'success',
@@ -36,7 +53,7 @@ class PeminjamHandler {
 
   async deletePeminjamByIdHandler(request) {
     const { id } = request.params;
-    await this._service.deletePeminjam(id);
+    await this._peminjamService.deletePeminjam(id);
     return {
       status: 'success',
       message: 'Peminjam berhasil di hapus',

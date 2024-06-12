@@ -17,15 +17,15 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: `/books/id/{id?}`,
-    handler: (request, h) => handler.getBookByIdUserHandler(request, h),
+    path: `/books/id={id?}`,
+    handler: (request, h) => handler.getBookByIdHandler(request, h),
     options: {
       auth: 'libraryapp_jwt',
     },
   },
   {
     method: 'GET',
-    path: `/books/name/{name?}`,
+    path: `/books/name={name?}`,
     handler: (request, h) => handler.getBookByNameHandler(request, h),
     options: {
       auth: 'libraryapp_jwt',
@@ -33,7 +33,7 @@ const routes = (handler) => [
   },
   {
     method: 'DELETE',
-    path: '/books/{id}',
+    path: '/books/id={id?}',
     handler: (request) => handler.deleteBook(request),
     options: {
       auth: 'libraryapp_jwt',
